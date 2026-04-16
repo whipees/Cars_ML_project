@@ -1,0 +1,5 @@
+pandas
+scikit-learn==1.6.1
+tensorflow>=2.16.1
+joblib
+Pillow
