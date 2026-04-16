@@ -3,6 +3,10 @@ import os
 
 
 def load_data(file_path):
+    """
+    Attempts to load the CSV file using multiple encodings
+    (utf-16, windows-1250, utf-8) to safely prevent decoding errors.
+    """
     try:
         return pd.read_csv(file_path, sep="\t", encoding="utf-16")
     except Exception as e1:
@@ -17,6 +21,10 @@ def load_data(file_path):
 
 
 def rename_columns(df):
+    """
+    Translates Czech column names into standardized English names
+    required for the machine learning model.
+    """
     try:
         df = df.rename(columns={
             "Znacka": "brand",
@@ -38,6 +46,9 @@ def rename_columns(df):
 
 
 def drop_missing_values(df):
+    """
+    Removes any rows that contain missing or null values from the dataset.
+    """
     try:
         return df.dropna()
     except Exception as e:
@@ -46,6 +57,10 @@ def drop_missing_values(df):
 
 
 def convert_numeric_types(df):
+    """
+    Converts specific columns to strict numeric data types,
+    coercing any parsing errors into NaN values.
+    """
     try:
         df["price"] = pd.to_numeric(df["price"], errors="coerce")
         df["year"] = pd.to_numeric(df["year"], errors="coerce")
@@ -58,6 +73,10 @@ def convert_numeric_types(df):
 
 
 def normalize_text_columns(df):
+    """
+    Cleans text columns by removing leading/trailing whitespaces
+    and converting all characters to lowercase to prevent duplicates.
+    """
     try:
         text_cols = ["brand", "model", "fuel", "engine_type", "drivetrain", "transmission"]
         for col in text_cols:
@@ -69,6 +88,10 @@ def normalize_text_columns(df):
 
 
 def clean_image_paths(df):
+    """
+    Normalizes image file paths by replacing Windows-style backslashes
+    with standard forward slashes for cross-platform compatibility.
+    """
     try:
         df["image_path"] = df["image_path"].str.replace("obrazky_aut\\\\", "cars_photos/", regex=False)
         df["image_path"] = df["image_path"].str.replace("obrazky_aut\\", "cars_photos/", regex=False)
@@ -79,6 +102,10 @@ def clean_image_paths(df):
 
 
 def save_data(df, output_path):
+    """
+    Creates the necessary destination directories if they do not exist
+    and saves the cleaned dataframe to the disk as a CSV file.
+    """
     try:
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         df.to_csv(output_path, index=False)
@@ -87,6 +114,10 @@ def save_data(df, output_path):
 
 
 def main():
+    """
+    Executes the complete data preparation pipeline: loading, renaming,
+    cleaning, formatting, and saving the final processed dataset.
+    """
     try:
         input_path = "../../data/raw/cars_data_not_clean.csv"
         output_path = "../../data/processed/cleaned_cars_data.csv"
